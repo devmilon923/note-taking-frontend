@@ -1,11 +1,20 @@
 import { z } from "zod";
 
+export const ALLOWED_INTERESTS = [
+  "chess",
+  "coding",
+  "swimming",
+  "reading",
+] as const;
+
+export type Interest = (typeof ALLOWED_INTERESTS)[number];
+
 export interface User {
   _id: string;
   name: string;
   email: string;
   role: "user" | "admin" | string;
-  interests?: string[];
+  interests?: string[] | string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -31,10 +40,10 @@ export const loginSchema = z.object({
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export const registerSchema = z.object({
-  name: z.string().trim().min(2, "Name must be at least 2 characters"),
+  name: z.string().trim().min(3, "Name must be at least 3 characters"),
   email: z.string().trim().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  interests: z.string().optional(), // Entered as comma-separated in the form, transformed on submit
+  interests: z.string().optional(),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;
@@ -49,4 +58,9 @@ export interface RegisterPayload {
 export interface LoginPayload {
   email: string;
   password: string;
+}
+
+export interface UpdateProfilePayload {
+  name?: string;
+  interests?: Interest | string | string[];
 }

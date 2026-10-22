@@ -20,6 +20,14 @@ export const authService = {
     return response.data;
   },
 
+  async updateProfile(data: {
+    name?: string;
+    interests?: string[];
+  }): Promise<ApiResponse<User>> {
+    const response = await api.patch<ApiResponse<User>>("/user/profile", data);
+    return response.data;
+  },
+
   async logout(): Promise<void> {
     try {
       await api.post("/auth/logout");
