@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { NotesWorkspace } from "@/components/notes/NotesWorkspace";
+import { EditProfileDialog } from "@/components/user/EditProfileDialog";
+import { useUserInterests } from "@/hooks/useAdmin";
 import {
   Card,
   CardContent,
@@ -20,11 +22,18 @@ import {
   Sparkles,
   ChevronDown,
   ChevronUp,
+  Edit3,
+  Users,
 } from "lucide-react";
 
 export function UserHomeView() {
   const { user } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
+
+  // Scenario 1 Aggregation: Group users by interests
+  const { data: interestsData } = useUserInterests();
+  const communityInterests = interestsData?.data || [];
 
   return (
     <div className="max-w-6xl w-full mx-auto p-6 md:p-8 space-y-8">
@@ -68,16 +77,27 @@ export function UserHomeView() {
       {/* Collapsible Profile Details Card */}
       {showProfile && (
         <Card className="border-border shadow-sm animate-in fade-in-50 duration-200">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <UserIcon className="h-4 w-4 text-primary" />
-              Account Details
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Synchronized from <code className="font-mono">GET /user/profile</code>
-            </CardDescription>
+          <CardHeader className="pb-3 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base flex items-center gap-2">
+                <UserIcon className="h-4 w-4 text-primary" />
+                Account Details
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Synchronized from <code className="font-mono">GET /user/profile</code>
+              </CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setEditProfileOpen(true)}
+              className="gap-1.5 text-xs cursor-pointer"
+            >
+              <Edit3 className="h-3.5 w-3.5" />
+              Edit Profile
+            </Button>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="p-3 rounded-xl border bg-card/60 flex items-start gap-2.5">
                 <Mail className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
@@ -98,7 +118,7 @@ export function UserHomeView() {
               <div className="p-3 rounded-xl border bg-card/60 flex items-start gap-2.5">
                 <Tag className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="min-w-0">
-                  <p className="text-[11px] font-medium text-muted-foreground">Interests</p>
+                  <p className="text-[11px] font-medium text-muted-foreground">Interest</p>
                   <div className="flex flex-wrap gap-1 mt-0.5">
                     {(() => {
                       const interestsList = Array.isArray(user?.interests)
@@ -110,7 +130,7 @@ export function UserHomeView() {
                         interestsList.map((interest: string, i: number) => (
                           <span
                             key={i}
-                            className="px-1.5 py-0.2 rounded bg-muted text-[10px] font-medium text-foreground"
+                            className="px-1.5 py-0.2 rounded bg-muted text-[10px] font-medium text-foreground capitalize"
                           >
                             {interest}
                           </span>
@@ -133,6 +153,29 @@ export function UserHomeView() {
                 </div>
               </div>
             </div>
+
+            {/* Scenario 1 Aggregation: Community Interests overview */}
+            {communityInterests.length > 0 && (
+              <div className="pt-2 border-t">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-2">
+                  <Users className="h-3.5 w-3.5 text-primary" />
+                  <span>Community Interests (<code className="font-mono text-[10px]">GET /user/interests</code>)</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {communityInterests.map((group) => (
+                    <div
+                      key={group.interest}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-muted/60 border border-border text-xs"
+                    >
+                      <span className="font-semibold capitalize">{group.interest}</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-primary/10 text-primary font-bold">
+                        {group.count}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -141,6 +184,13 @@ export function UserHomeView() {
       <section className="space-y-4">
         <NotesWorkspace />
       </section>
+
+      {/* Edit Profile Modal Dialog (PATCH /user/profile) */}
+      <EditProfileDialog
+        user={user}
+        open={editProfileOpen}
+        onOpenChange={setEditProfileOpen}
+      />
     </div>
   );
 }

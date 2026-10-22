@@ -1,5 +1,11 @@
 import api from "@/query/axios";
-import { ApiResponse, LoginPayload, RegisterPayload, User } from "@/types/auth";
+import {
+  ApiResponse,
+  LoginPayload,
+  RegisterPayload,
+  UpdateProfilePayload,
+  User,
+} from "@/types/auth";
 
 export const authService = {
   async login(payload: LoginPayload): Promise<ApiResponse<User>> {
@@ -20,10 +26,7 @@ export const authService = {
     return response.data;
   },
 
-  async updateProfile(data: {
-    name?: string;
-    interests?: string[];
-  }): Promise<ApiResponse<User>> {
+  async updateProfile(data: UpdateProfilePayload): Promise<ApiResponse<User>> {
     const response = await api.patch<ApiResponse<User>>("/user/profile", data);
     return response.data;
   },

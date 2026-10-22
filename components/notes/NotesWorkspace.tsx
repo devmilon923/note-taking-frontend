@@ -166,11 +166,12 @@ export function NotesWorkspace() {
       )}
 
       {/* Pagination Controls */}
-      {pagination && pagination.totalPage > 1 && (
+      {pagination && pagination.totalData > 0 && (
         <div className="flex items-center justify-between border-t border-border pt-4">
           <div className="text-xs text-muted-foreground">
             Page <span className="font-semibold text-foreground">{pagination.currentPage}</span> of{" "}
-            <span className="font-semibold text-foreground">{pagination.totalPage}</span>
+            <span className="font-semibold text-foreground">{pagination.totalPage}</span> (
+            {pagination.totalData} total notes)
           </div>
 
           <div className="flex items-center gap-2">

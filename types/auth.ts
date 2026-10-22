@@ -3,8 +3,8 @@ import { z } from "zod";
 export const ALLOWED_INTERESTS = [
   "chess",
   "coding",
-  "swimming",
-  "reading",
+  "music",
+  "travel",
 ] as const;
 
 export type Interest = (typeof ALLOWED_INTERESTS)[number];
