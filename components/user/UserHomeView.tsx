@@ -22,6 +22,7 @@ import {
   ChevronDown,
   ChevronUp,
   Edit3,
+  Flower2,
 } from "lucide-react";
 
 export function UserHomeView() {
@@ -36,7 +37,7 @@ export function UserHomeView() {
         <div>
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20">
-              <Sparkles className="h-3 w-3" /> User Workspace
+              <Flower2 className="h-3 w-3" /> User Workspace
             </span>
             {user?.role && (
               <span className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md bg-muted text-foreground/85 border border-border/80">

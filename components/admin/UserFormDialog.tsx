@@ -24,7 +24,7 @@ import {
 } from "@/types/admin";
 import { useCreateUser, useUpdateUser } from "@/hooks/useAdmin";
 import { getFieldErrors } from "@/query/axios";
-import { Loader2, Plus, ShieldCheck, User as UserIcon } from "lucide-react";
+import { Loader2, Plus, ShieldCheck, User as UserIcon, Eye, EyeOff } from "lucide-react";
 
 interface UserFormDialogProps {
   open: boolean;
@@ -43,6 +43,7 @@ export function UserFormDialog({
 
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedRole, setSelectedRole] = useState<"user" | "admin">("user");
+  const [showPassword, setShowPassword] = useState(false);
 
   // Create Form
   const createForm = useForm<CreateUserInput>({
@@ -325,13 +326,29 @@ export function UserFormDialog({
 
             <div className="space-y-1.5">
               <Label htmlFor="create-password">Initial Password</Label>
-              <Input
-                id="create-password"
-                type="password"
-                placeholder="Minimum 6 characters"
-                disabled={isPending}
-                {...createForm.register("password")}
-              />
+              <div className="relative">
+                <Input
+                  id="create-password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Minimum 6 characters"
+                  disabled={isPending}
+                  className="pr-10"
+                  {...createForm.register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer transition-colors p-1 rounded-md focus:outline-none"
+                  tabIndex={-1}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
               {createForm.formState.errors.password && (
                 <p className="text-xs text-destructive">
                   {createForm.formState.errors.password.message}

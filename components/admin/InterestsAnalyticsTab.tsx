@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   BookOpen,
   Compass,
+  Flower2,
   Loader2,
   RefreshCw,
   Sparkles,
@@ -100,7 +101,7 @@ export function InterestsAnalyticsTab() {
                   <div className="flex items-center justify-between gap-2 pb-3 border-b border-border/70">
                     <div className="flex items-center gap-2.5">
                       <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                        <Sparkles className="h-4 w-4" />
+                        <Flower2 className="h-4 w-4" />
                       </div>
                       <h4 className="font-semibold text-base capitalize text-foreground">
                         {group.interest}
