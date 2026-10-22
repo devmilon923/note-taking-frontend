@@ -23,6 +23,7 @@ import {
   updateUserSchema,
 } from "@/types/admin";
 import { useCreateUser, useUpdateUser } from "@/hooks/useAdmin";
+import { getFieldErrors } from "@/query/axios";
 import { Loader2, Plus, ShieldCheck, User as UserIcon } from "lucide-react";
 
 interface UserFormDialogProps {
@@ -129,6 +130,15 @@ export function UserFormDialog({
         onSuccess: () => {
           onOpenChange(false);
         },
+        onError: (error) => {
+          const fieldErrors = getFieldErrors(error);
+          Object.entries(fieldErrors).forEach(([field, msg]) => {
+            createForm.setError(field as any, {
+              type: "server",
+              message: msg,
+            });
+          });
+        },
       },
     );
   };
@@ -147,6 +157,15 @@ export function UserFormDialog({
       {
         onSuccess: () => {
           onOpenChange(false);
+        },
+        onError: (error) => {
+          const fieldErrors = getFieldErrors(error);
+          Object.entries(fieldErrors).forEach(([field, msg]) => {
+            editForm.setError(field as any, {
+              type: "server",
+              message: msg,
+            });
+          });
         },
       },
     );

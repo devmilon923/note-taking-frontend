@@ -10,7 +10,7 @@ import { Loader2, LogIn } from "lucide-react";
 
 import { loginSchema, LoginInput } from "@/types/auth";
 import { useAuth } from "@/context/AuthContext";
-import { getErrorMessage } from "@/query/axios";
+import { getErrorMessage, getFieldErrors } from "@/query/axios";
 
 import {
   Form,
@@ -58,6 +58,16 @@ export function LoginForm() {
         response.data?.role === "admin" ? "/admin" : "/";
       router.replace(redirectParam || defaultDestination);
     } catch (error) {
+      const fieldErrors = getFieldErrors(error);
+      if (Object.keys(fieldErrors).length > 0) {
+        Object.entries(fieldErrors).forEach(([field, msg]) => {
+          form.setError(field as any, {
+            type: "server",
+            message: msg,
+          });
+        });
+      }
+
       const message = getErrorMessage(error);
       setServerError(message);
       toast.error(message);

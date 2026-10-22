@@ -11,7 +11,7 @@ import { ALLOWED_INTERESTS, User } from "@/types/auth";
 import { authService } from "@/services/auth.service";
 import { AUTH_QUERY_KEY } from "@/context/AuthContext";
 import { zodResolver } from "@/lib/zod-resolver";
-import { getErrorMessage } from "@/query/axios";
+import { getErrorMessage, getFieldErrors } from "@/query/axios";
 
 import {
   Dialog,
@@ -98,6 +98,15 @@ export function EditProfileDialog({
       toast.success(response.message || "Profile updated successfully!");
       onOpenChange(false);
     } catch (error) {
+      const fieldErrors = getFieldErrors(error);
+      if (Object.keys(fieldErrors).length > 0) {
+        Object.entries(fieldErrors).forEach(([field, msg]) => {
+          form.setError(field as any, {
+            type: "server",
+            message: msg,
+          });
+        });
+      }
       toast.error(getErrorMessage(error));
     } finally {
       setIsSubmitting(false);

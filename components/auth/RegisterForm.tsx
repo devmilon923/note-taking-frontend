@@ -10,7 +10,7 @@ import { Loader2, UserPlus } from "lucide-react";
 
 import { registerSchema, RegisterInput } from "@/types/auth";
 import { useAuth } from "@/context/AuthContext";
-import { getErrorMessage } from "@/query/axios";
+import { getErrorMessage, getFieldErrors } from "@/query/axios";
 
 import {
   Form,
@@ -74,6 +74,16 @@ export function RegisterForm() {
       // Navigate to login
       router.replace("/login");
     } catch (error) {
+      const fieldErrors = getFieldErrors(error);
+      if (Object.keys(fieldErrors).length > 0) {
+        Object.entries(fieldErrors).forEach(([field, msg]) => {
+          form.setError(field as any, {
+            type: "server",
+            message: msg,
+          });
+        });
+      }
+
       const message = getErrorMessage(error);
       setServerError(message);
       toast.error(message);

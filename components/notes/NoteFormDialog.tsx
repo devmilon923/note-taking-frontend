@@ -7,6 +7,7 @@ import { Loader2, Plus, Edit3 } from "lucide-react";
 
 import { Note, noteFormSchema, NoteFormValues } from "@/types/note";
 import { useCreateNote, useUpdateNote } from "@/hooks/useNotes";
+import { getFieldErrors } from "@/query/axios";
 
 import {
   Dialog,
@@ -80,9 +81,16 @@ export function NoteFormDialog({
         await createMutation.mutateAsync(values);
       }
       onOpenChange(false);
-      form.reset();
-    } catch {
-      // Error handled by mutation onError toast
+    } catch (error) {
+      const fieldErrors = getFieldErrors(error);
+      if (Object.keys(fieldErrors).length > 0) {
+        Object.entries(fieldErrors).forEach(([field, msg]) => {
+          form.setError(field as any, {
+            type: "server",
+            message: msg,
+          });
+        });
+      }
     }
   };
 
