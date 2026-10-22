@@ -26,12 +26,26 @@ import {
   User,
 } from "lucide-react";
 
+import { useDebounce } from "@/hooks/useDebounce";
+
 export function GlobalNotesTab() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(6);
-  const { data, isLoading, isError, refetch } = useAdminNotes(page, limit);
-
   const [searchQuery, setSearchQuery] = useState("");
+
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  // Reset page to 1 when search query changes
+  React.useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
+
+  const { data, isLoading, isError, refetch } = useAdminNotes({
+    page,
+    limit,
+    searchQ: debouncedSearch.trim() || undefined,
+  });
+
   const deleteMutation = useDeleteNoteAdmin();
 
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
@@ -39,17 +53,6 @@ export function GlobalNotesTab() {
 
   const notes = data?.data || [];
   const pagination = data?.pagination;
-
-  const filteredNotes = useMemo(() => {
-    return notes.filter((n) => {
-      const q = searchQuery.toLowerCase();
-      return (
-        n.title.toLowerCase().includes(q) ||
-        n.content.toLowerCase().includes(q) ||
-        n.author.toLowerCase().includes(q)
-      );
-    });
-  }, [notes, searchQuery]);
 
   const confirmDeleteNote = () => {
     if (!noteToDelete) return;
@@ -102,7 +105,7 @@ export function GlobalNotesTab() {
             Retry
           </Button>
         </div>
-      ) : filteredNotes.length === 0 ? (
+      ) : notes.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-muted-foreground gap-2 bg-card rounded-xl border border-border">
           <FileSpreadsheet className="h-10 w-10 text-muted-foreground/60" />
           <p className="text-sm font-medium">No notes found</p>
@@ -114,7 +117,7 @@ export function GlobalNotesTab() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredNotes.map((note) => (
+          {notes.map((note) => (
             <div
               key={note._id}
               className="p-5 rounded-xl border border-border bg-card flex flex-col justify-between gap-4 hover:border-primary/40 transition-colors shadow-xs"

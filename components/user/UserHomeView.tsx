@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { NotesWorkspace } from "@/components/notes/NotesWorkspace";
 import { EditProfileDialog } from "@/components/user/EditProfileDialog";
-import { useUserInterests } from "@/hooks/useAdmin";
 import {
   Card,
   CardContent,
@@ -23,17 +22,12 @@ import {
   ChevronDown,
   ChevronUp,
   Edit3,
-  Users,
 } from "lucide-react";
 
 export function UserHomeView() {
   const { user } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
-
-  // Scenario 1 Aggregation: Group users by interests
-  const { data: interestsData } = useUserInterests();
-  const communityInterests = interestsData?.data || [];
 
   return (
     <div className="max-w-6xl w-full mx-auto p-6 md:p-8 space-y-8">
@@ -153,29 +147,6 @@ export function UserHomeView() {
                 </div>
               </div>
             </div>
-
-            {/* Scenario 1 Aggregation: Community Interests overview */}
-            {communityInterests.length > 0 && (
-              <div className="pt-2 border-t">
-                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-2">
-                  <Users className="h-3.5 w-3.5 text-primary" />
-                  <span>Community Interests (<code className="font-mono text-[10px]">GET /user/interests</code>)</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {communityInterests.map((group) => (
-                    <div
-                      key={group.interest}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-muted/60 border border-border text-xs"
-                    >
-                      <span className="font-semibold capitalize">{group.interest}</span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-primary/10 text-primary font-bold">
-                        {group.count}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
       )}

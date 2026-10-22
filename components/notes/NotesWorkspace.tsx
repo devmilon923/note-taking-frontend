@@ -21,12 +21,26 @@ import { NoteDetailDialog } from "@/components/notes/NoteDetailDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { useDebounce } from "@/hooks/useDebounce";
+
 export function NotesWorkspace() {
   const [page, setPage] = useState(1);
   const limit = 6;
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // React Query for fetching paginated notes
-  const { data, isLoading, isPlaceholderData } = useNotes(page, limit);
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  // Reset page to 1 when search query changes
+  React.useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
+
+  // React Query for fetching paginated notes with server-side title search
+  const { data, isLoading, isPlaceholderData } = useNotes({
+    page,
+    limit,
+    searchQ: debouncedSearch.trim() || undefined,
+  });
 
   // Modal dialog states
   const [formOpen, setFormOpen] = useState(false);
@@ -38,22 +52,8 @@ export function NotesWorkspace() {
   const [viewOpen, setViewOpen] = useState(false);
   const [noteToView, setNoteToView] = useState<Note | null>(null);
 
-  // Search filter
-  const [searchQuery, setSearchQuery] = useState("");
-
   const notes = data?.data || [];
   const pagination = data?.pagination;
-
-  // Client-side instant filter across current page notes
-  const filteredNotes = useMemo(() => {
-    if (!searchQuery.trim()) return notes;
-    const query = searchQuery.toLowerCase();
-    return notes.filter(
-      (n) =>
-        n.title.toLowerCase().includes(query) ||
-        n.content.toLowerCase().includes(query),
-    );
-  }, [notes, searchQuery]);
 
   const handleOpenCreate = () => {
     setNoteToEdit(null);
@@ -118,7 +118,7 @@ export function NotesWorkspace() {
             Loading your notes...
           </p>
         </div>
-      ) : filteredNotes.length === 0 ? (
+      ) : notes.length === 0 ? (
         <div className="min-h-[320px] rounded-3xl border border-dashed border-border bg-card/50 flex flex-col items-center justify-center p-8 text-center">
           <div className="h-14 w-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
             <FileText className="h-7 w-7" />
@@ -153,7 +153,7 @@ export function NotesWorkspace() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredNotes.map((note) => (
+          {notes.map((note) => (
             <NoteCard
               key={note._id}
               note={note}

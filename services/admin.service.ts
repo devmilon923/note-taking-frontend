@@ -11,6 +11,9 @@ export const adminService = {
   async getUsers(params?: {
     page?: number;
     limit?: number;
+    role?: "admin" | "user" | "all";
+    searchQ?: string;
+    search?: string;
   }): Promise<AdminUsersResponse> {
     const response = await api.get<AdminUsersResponse>("/users", {
       params,
@@ -46,6 +49,8 @@ export const adminService = {
   async getAllNotes(params?: {
     page?: number;
     limit?: number;
+    title?: string;
+    searchQ?: string;
     author?: string;
   }): Promise<NotesResponse> {
     const response = await api.get<NotesResponse>("/notes", {

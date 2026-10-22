@@ -22,16 +22,29 @@ import {
   Users,
 } from "lucide-react";
 import { UserFormDialog } from "./UserFormDialog";
+import { useDebounce } from "@/hooks/useDebounce";
 import { DeleteUserDialog } from "./DeleteUserDialog";
 import { UserNotesLookupDialog } from "./UserNotesLookupDialog";
 
 export function UserManagementTable() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
-  const { data, isLoading, isError, refetch } = useAdminUsers(page, limit);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
+
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  // Reset page to 1 when search query or role filter changes
+  React.useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, roleFilter]);
+
+  const { data, isLoading, isError, refetch } = useAdminUsers({
+    page,
+    limit,
+    role: roleFilter === "all" ? undefined : roleFilter,
+    searchQ: debouncedSearch.trim() || undefined,
+  });
 
   // Dialog states
   const [formDialogOpen, setFormDialogOpen] = useState(false);
@@ -45,18 +58,6 @@ export function UserManagementTable() {
 
   const users = data?.data || [];
   const pagination = data?.pagination;
-
-  // Filtered users for instant search
-  const filteredUsers = useMemo(() => {
-    return users.filter((u) => {
-      const matchesSearch =
-        u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        u.email.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesRole =
-        roleFilter === "all" ? true : u.role === roleFilter;
-      return matchesSearch && matchesRole;
-    });
-  }, [users, searchQuery, roleFilter]);
 
   const handleOpenCreate = () => {
     setUserToEdit(null);
@@ -148,7 +149,7 @@ export function UserManagementTable() {
               Retry
             </Button>
           </div>
-        ) : filteredUsers.length === 0 ? (
+        ) : users.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-2">
             <Users className="h-10 w-10 text-muted-foreground/60" />
             <p className="text-sm font-medium">No users found</p>
@@ -171,7 +172,7 @@ export function UserManagementTable() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
-                {filteredUsers.map((user) => {
+                {users.map((user) => {
                   const initial = user.name
                     ? user.name.charAt(0).toUpperCase()
                     : "U";

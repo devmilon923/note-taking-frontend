@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getIsLoggedIn, setIsLoggedIn } from "@/lib/auth-storage";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001",
@@ -8,11 +9,33 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Request interceptor: Suppress private API calls if user is logged out in localStorage
+api.interceptors.request.use((config) => {
+  if (typeof window === "undefined") return config;
+
+  const url = config.url || "";
+  const isPublicAuthEndpoint =
+    url.includes("/auth/login") ||
+    url.includes("/auth/register") ||
+    url.includes("/auth/logout");
+
+  if (!isPublicAuthEndpoint && !getIsLoggedIn()) {
+    const controller = new AbortController();
+    controller.abort("User is logged out: private API call suppressed");
+    config.signal = controller.signal;
+  }
+
+  return config;
+});
+
+// Response interceptor: Clear localStorage on 401 Unauthorized
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Only handle redirect if in the browser
+    // Only handle in the browser
     if (typeof window !== "undefined" && error.response?.status === 401) {
+      setIsLoggedIn(false);
+
       const requestUrl = error.config?.url || "";
       const isAuthEndpoint =
         requestUrl.includes("/auth/login") ||

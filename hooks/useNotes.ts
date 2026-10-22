@@ -6,10 +6,26 @@ import { getErrorMessage } from "@/query/axios";
 
 export const NOTES_QUERY_KEY = ["notes"] as const;
 
-export function useNotes(page = 1, limit = 6) {
+export interface NotesQueryParams {
+  page?: number;
+  limit?: number;
+  title?: string;
+  searchQ?: string;
+  search?: string;
+}
+
+export function useNotes(
+  paramsOrPage: NotesQueryParams | number = 1,
+  maybeLimit = 6,
+) {
+  const params: NotesQueryParams =
+    typeof paramsOrPage === "number"
+      ? { page: paramsOrPage, limit: maybeLimit }
+      : paramsOrPage;
+
   return useQuery({
-    queryKey: [...NOTES_QUERY_KEY, { page, limit }],
-    queryFn: () => noteService.getNotes({ page, limit }),
+    queryKey: [...NOTES_QUERY_KEY, params],
+    queryFn: () => noteService.getNotes(params),
     placeholderData: (prev) => prev,
     staleTime: 30 * 1000,
   });

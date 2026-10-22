@@ -1,10 +1,18 @@
 "use client";
 
-import React, { createContext, useContext, useCallback, useMemo } from "react";
+import React, {
+  createContext,
+  useContext,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "@/services/auth.service";
 import { ApiResponse, LoginPayload, RegisterPayload, User } from "@/types/auth";
 import { useRouter } from "next/navigation";
+import { getIsLoggedIn, setIsLoggedIn } from "@/lib/auth-storage";
 
 export const AUTH_QUERY_KEY = ["auth", "profile"] as const;
 
@@ -24,10 +32,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
+  // Track localStorage login flag in state
+  const [hasStoredSession, setHasStoredSession] = useState<boolean>(() =>
+    getIsLoggedIn(),
+  );
+
+  useEffect(() => {
+    setHasStoredSession(getIsLoggedIn());
+  }, []);
+
   // 1. Fetch authenticated user profile via React Query
+  // ONLY enabled if localStorage indicates the user is logged in
   const {
     data: profileData,
-    isLoading,
+    isLoading: isProfileLoading,
     refetch,
   } = useQuery({
     queryKey: AUTH_QUERY_KEY,
@@ -35,40 +53,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         return await authService.getProfile();
       } catch (error: any) {
-        // Treat 401 (unauthorized) and 403/404 as unauthenticated rather than fatal errors
         const status = error.response?.status;
         if (status === 401 || status === 403 || status === 404) {
+          setIsLoggedIn(false);
+          setHasStoredSession(false);
           return null;
         }
         throw error;
       }
     },
+    enabled: hasStoredSession,
     retry: false,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 
-  const user = profileData?.data || null;
-  const isAuthenticated = !!user;
+  const user = hasStoredSession ? profileData?.data || null : null;
+  const isAuthenticated = Boolean(hasStoredSession && user);
+  const isLoading = hasStoredSession ? isProfileLoading : false;
 
   // 2. Login mutation
   const loginMutation = useMutation({
     mutationFn: (payload: LoginPayload) => authService.login(payload),
     onSuccess: (data) => {
+      setIsLoggedIn(true);
+      setHasStoredSession(true);
       queryClient.setQueryData(AUTH_QUERY_KEY, data);
     },
   });
 
-  // 3. Register mutation (does not set profile cache since login sets the JWT cookie)
+  // 3. Register mutation
   const registerMutation = useMutation({
     mutationFn: (payload: RegisterPayload) => authService.register(payload),
   });
 
-  // 4. Logout mutation: clears cache and uses replace to prevent back-button loops
+  // 4. Logout mutation: clears localStorage and React Query caches
   const logoutMutation = useMutation({
     mutationFn: () => authService.logout(),
-    onSettled: () => {
+    onMutate: () => {
+      setIsLoggedIn(false);
+      setHasStoredSession(false);
+      queryClient.cancelQueries();
       queryClient.setQueryData(AUTH_QUERY_KEY, null);
+    },
+    onSettled: () => {
+      setIsLoggedIn(false);
+      setHasStoredSession(false);
       queryClient.removeQueries();
       router.replace("/login");
     },
@@ -76,7 +106,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(
     async (payload: LoginPayload) => {
-      return await loginMutation.mutateAsync(payload);
+      const result = await loginMutation.mutateAsync(payload);
+      return result;
     },
     [loginMutation],
   );
@@ -89,6 +120,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const logout = useCallback(async () => {
+    setIsLoggedIn(false);
+    setHasStoredSession(false);
     await logoutMutation.mutateAsync();
   }, [logoutMutation]);
 

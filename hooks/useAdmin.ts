@@ -4,20 +4,43 @@ import { CreateUserInput, UpdateUserInput } from "@/types/admin";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/query/axios";
 
+export interface AdminUsersParams {
+  page?: number;
+  limit?: number;
+  role?: "admin" | "user" | "all";
+  searchQ?: string;
+  search?: string;
+}
+
+export interface AdminNotesParams {
+  page?: number;
+  limit?: number;
+  title?: string;
+  searchQ?: string;
+  author?: string;
+}
+
 export const ADMIN_KEYS = {
-  users: (page = 1, limit = 10) => ["admin", "users", { page, limit }] as const,
+  users: (params?: AdminUsersParams) => ["admin", "users", params] as const,
   user: (id: string) => ["admin", "user", id] as const,
-  notes: (page = 1, limit = 10, author?: string) =>
-    ["admin", "notes", { page, limit, author }] as const,
+  notes: (params?: AdminNotesParams) => ["admin", "notes", params] as const,
   interests: ["admin", "interests"] as const,
   lookup: (userId: string, page = 1) =>
     ["admin", "lookup", userId, { page }] as const,
 };
 
-export function useAdminUsers(page = 1, limit = 10) {
+export function useAdminUsers(
+  paramsOrPage: AdminUsersParams | number = 1,
+  maybeLimit = 10,
+) {
+  const params: AdminUsersParams =
+    typeof paramsOrPage === "number"
+      ? { page: paramsOrPage, limit: maybeLimit }
+      : paramsOrPage;
+
   return useQuery({
-    queryKey: ADMIN_KEYS.users(page, limit),
-    queryFn: () => adminService.getUsers({ page, limit }),
+    queryKey: ADMIN_KEYS.users(params),
+    queryFn: () => adminService.getUsers(params),
     placeholderData: (prev) => prev,
     staleTime: 30 * 1000,
   });
@@ -32,10 +55,19 @@ export function useAdminUser(id: string) {
   });
 }
 
-export function useAdminNotes(page = 1, limit = 10, author?: string) {
+export function useAdminNotes(
+  paramsOrPage: AdminNotesParams | number = 1,
+  maybeLimit = 10,
+  maybeAuthor?: string,
+) {
+  const params: AdminNotesParams =
+    typeof paramsOrPage === "number"
+      ? { page: paramsOrPage, limit: maybeLimit, author: maybeAuthor }
+      : paramsOrPage;
+
   return useQuery({
-    queryKey: ADMIN_KEYS.notes(page, limit, author),
-    queryFn: () => adminService.getAllNotes({ page, limit, author }),
+    queryKey: ADMIN_KEYS.notes(params),
+    queryFn: () => adminService.getAllNotes(params),
     placeholderData: (prev) => prev,
     staleTime: 30 * 1000,
   });

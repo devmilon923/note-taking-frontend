@@ -11,6 +11,9 @@ export const noteService = {
   async getNotes(params?: {
     page?: number;
     limit?: number;
+    title?: string;
+    searchQ?: string;
+    search?: string;
   }): Promise<NotesResponse> {
     const response = await api.get<NotesResponse>("/notes", {
       params,
