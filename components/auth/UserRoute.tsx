@@ -10,17 +10,21 @@ interface UserRouteProps {
 }
 
 export function UserRoute({ children }: UserRouteProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      const search = typeof window !== "undefined" ? window.location.search : "";
-      const fullPath = `${pathname}${search}`;
-      router.replace(`/login?redirect=${encodeURIComponent(fullPath)}`);
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        const search = typeof window !== "undefined" ? window.location.search : "";
+        const fullPath = `${pathname}${search}`;
+        router.replace(`/login?redirect=${encodeURIComponent(fullPath)}`);
+      } else if (user?.role === "admin") {
+        router.replace("/admin");
+      }
     }
-  }, [isLoading, isAuthenticated, router, pathname]);
+  }, [isLoading, isAuthenticated, user, router, pathname]);
 
   if (isLoading) {
     return (
@@ -33,8 +37,8 @@ export function UserRoute({ children }: UserRouteProps) {
     );
   }
 
-  // Prevent flash while redirecting to login
-  if (!isAuthenticated) {
+  // Prevent flash while redirecting to login or admin console
+  if (!isAuthenticated || user?.role === "admin") {
     return null;
   }
 

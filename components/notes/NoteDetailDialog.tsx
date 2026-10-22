@@ -60,7 +60,7 @@ export function NoteDetailDialog({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider mb-1">
               <FileText className="h-4 w-4" />
-              Note Details (<code className="font-mono text-[10px]">GET /notes/:id</code>)
+              Note Details
             </div>
             {isLoading && (
               <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />

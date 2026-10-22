@@ -93,7 +93,7 @@ export function UserNotesLookupDialog({
               <p className="text-sm">Fetching user notes via MongoDB aggregation...</p>
             </div>
           ) : isError ? (
-            <div className="p-6 text-center text-sm text-destructive bg-destructive/10 rounded-xl">
+            <div className="p-4 text-center text-xs text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
               Unable to load notes for this user.
             </div>
           ) : notes.length === 0 ? (
@@ -108,13 +108,13 @@ export function UserNotesLookupDialog({
             <div className="space-y-3">
               <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
                 <span>Found {notes.length} note{notes.length === 1 ? "" : "s"}</span>
-                <span className="font-mono">User ID: {userId}</span>
+                <span className="font-mono text-[11px]">User ID: {userId}</span>
               </div>
 
               {notes.map((note) => (
                 <div
                   key={note._id}
-                  className="p-4 rounded-xl border border-border bg-card/60 hover:bg-card transition-colors space-y-2 group"
+                  className="p-4 rounded-xl border border-border/80 bg-card shadow-xs hover:shadow-sm hover:border-border transition-all duration-150 space-y-2 group"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <h4 className="font-semibold text-sm line-clamp-1">
@@ -125,7 +125,7 @@ export function UserNotesLookupDialog({
                       size="sm"
                       onClick={() => handleDeleteNote(note._id)}
                       disabled={deleteNoteMutation.isPending}
-                      className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                      className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer transition-colors duration-150"
                       title="Delete note"
                     >
                       <Trash2 className="h-3.5 w-3.5" />

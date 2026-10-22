@@ -78,7 +78,7 @@ export function NotesWorkspace() {
   return (
     <div className="space-y-6">
       {/* Action Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-card p-4 rounded-2xl border border-border">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-card p-3.5 rounded-xl border border-border/80 shadow-xs">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -90,7 +90,7 @@ export function NotesWorkspace() {
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
@@ -112,16 +112,16 @@ export function NotesWorkspace() {
 
       {/* Notes Grid / States */}
       {isLoading ? (
-        <div className="min-h-[300px] flex flex-col items-center justify-center gap-3">
+        <div className="min-h-[280px] flex flex-col items-center justify-center gap-3">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-sm text-muted-foreground animate-pulse">
             Loading your notes...
           </p>
         </div>
       ) : notes.length === 0 ? (
-        <div className="min-h-[320px] rounded-3xl border border-dashed border-border bg-card/50 flex flex-col items-center justify-center p-8 text-center">
-          <div className="h-14 w-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-            <FileText className="h-7 w-7" />
+        <div className="min-h-[280px] rounded-xl border border-dashed border-border/80 bg-card/40 flex flex-col items-center justify-center p-8 text-center">
+          <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
+            <FileText className="h-6 w-6" />
           </div>
           {searchQuery ? (
             <>

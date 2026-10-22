@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { AdminRoute } from "@/components/auth/AdminRoute";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -9,22 +8,21 @@ import {
   Shield,
   LogOut,
   RefreshCw,
-  ArrowLeft,
 } from "lucide-react";
 
 function AdminHeader() {
   const { user, logout, refetchProfile, isLoading } = useAuth();
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur sticky top-0 z-10 px-6 py-3.5 flex items-center justify-between">
+    <header className="border-b border-border/80 bg-background/95 backdrop-blur-sm sticky top-0 z-10 px-6 py-3 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-destructive/10 text-destructive">
+        <div className="p-2 rounded-lg bg-primary/10 text-primary">
           <Shield className="h-5 w-5" />
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-base font-bold tracking-tight">Admin Console</h1>
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-destructive text-destructive-foreground">
+            <h1 className="text-sm font-semibold tracking-tight text-foreground">Admin Console</h1>
+            <span className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md bg-muted text-foreground/85 border border-border/80">
               Admin Role
             </span>
           </div>
@@ -32,24 +30,17 @@ function AdminHeader() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <Link href="/">
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs cursor-pointer">
-            <ArrowLeft className="h-3.5 w-3.5" />
-            User Workspace
-          </Button>
-        </Link>
-
+      <div className="flex items-center gap-2.5">
         <div className="hidden sm:flex flex-col text-right">
-          <span className="text-xs font-semibold">{user?.name}</span>
-          <span className="text-[11px] text-muted-foreground">{user?.email}</span>
+          <span className="text-xs font-medium text-foreground">{user?.name}</span>
+          <span className="text-[11px] text-muted-foreground font-mono">{user?.email}</span>
         </div>
 
         <Button
           variant="ghost"
           size="sm"
           onClick={() => refetchProfile()}
-          className="cursor-pointer gap-1.5"
+          className="cursor-pointer gap-1.5 text-muted-foreground hover:text-foreground"
           disabled={isLoading}
           title="Refresh Profile"
         >
@@ -57,10 +48,10 @@ function AdminHeader() {
         </Button>
 
         <Button
-          variant="destructive"
+          variant="ghost"
           size="sm"
           onClick={() => logout()}
-          className="cursor-pointer gap-1.5"
+          className="cursor-pointer gap-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
         >
           <LogOut className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Sign Out</span>

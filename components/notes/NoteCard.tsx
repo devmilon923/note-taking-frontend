@@ -35,7 +35,7 @@ export function NoteCard({ note, onView, onEdit, onDelete }: NoteCardProps) {
   };
 
   return (
-    <Card className="flex flex-col justify-between border-border hover:border-primary/40 transition-all duration-200 hover:shadow-md bg-card group">
+    <Card className="flex flex-col justify-between border border-border/80 bg-card rounded-xl shadow-xs hover:shadow-sm hover:border-border transition-all duration-200 hover:-translate-y-0.5 group">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
           <CardTitle
@@ -45,7 +45,7 @@ export function NoteCard({ note, onView, onEdit, onDelete }: NoteCardProps) {
             {note.title}
           </CardTitle>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1">
+        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground pt-1">
           <Calendar className="h-3 w-3" />
           <span>{formatDate(note.updatedAt || note.createdAt)}</span>
         </div>
@@ -60,12 +60,12 @@ export function NoteCard({ note, onView, onEdit, onDelete }: NoteCardProps) {
         </p>
       </CardContent>
 
-      <CardFooter className="pt-2 border-t flex items-center justify-between gap-2">
+      <CardFooter className="pt-2 border-t border-border/60 flex items-center justify-between gap-2">
         <Button
           variant="ghost"
           size="xs"
           onClick={() => onView(note)}
-          className="cursor-pointer gap-1 text-xs text-muted-foreground hover:text-foreground"
+          className="cursor-pointer gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors duration-150"
         >
           <Eye className="h-3.5 w-3.5" />
           Read
@@ -76,7 +76,7 @@ export function NoteCard({ note, onView, onEdit, onDelete }: NoteCardProps) {
             variant="ghost"
             size="xs"
             onClick={() => onEdit(note)}
-            className="cursor-pointer gap-1 text-xs hover:text-primary"
+            className="cursor-pointer gap-1 text-xs text-muted-foreground hover:text-primary transition-colors duration-150"
             title="Edit note"
           >
             <Edit3 className="h-3.5 w-3.5" />
@@ -87,7 +87,7 @@ export function NoteCard({ note, onView, onEdit, onDelete }: NoteCardProps) {
             variant="ghost"
             size="xs"
             onClick={() => onDelete(note)}
-            className="cursor-pointer gap-1 text-xs hover:text-destructive text-muted-foreground"
+            className="cursor-pointer gap-1 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-150"
             title="Delete note"
           >
             <Trash2 className="h-3.5 w-3.5" />

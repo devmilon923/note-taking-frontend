@@ -72,7 +72,7 @@ export function GlobalNotesTab() {
   return (
     <div className="space-y-4">
       {/* Controls Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-card p-4 rounded-xl border border-border">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-card p-3.5 rounded-xl border border-border/80 shadow-xs">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -84,7 +84,7 @@ export function GlobalNotesTab() {
         </div>
 
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="font-mono">
+          <span className="font-mono text-[11px]">
             Endpoint: <code className="text-foreground">GET /notes</code>
           </span>
         </div>
@@ -92,12 +92,12 @@ export function GlobalNotesTab() {
 
       {/* Notes Grid */}
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground gap-3 bg-card rounded-xl border border-border">
+        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground gap-3 bg-card rounded-xl border border-border/80 shadow-xs">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-sm">Retrieving global notes database...</p>
         </div>
       ) : isError ? (
-        <div className="p-8 text-center bg-card rounded-xl border border-border space-y-3">
+        <div className="p-8 text-center bg-card rounded-xl border border-border/80 shadow-xs space-y-3">
           <p className="text-sm font-medium text-destructive">
             Failed to retrieve global notes.
           </p>
@@ -106,7 +106,7 @@ export function GlobalNotesTab() {
           </Button>
         </div>
       ) : notes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground gap-2 bg-card rounded-xl border border-border">
+        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground gap-2 bg-card rounded-xl border border-border/80 shadow-xs">
           <FileSpreadsheet className="h-10 w-10 text-muted-foreground/60" />
           <p className="text-sm font-medium">No notes found</p>
           <p className="text-xs">
@@ -120,7 +120,7 @@ export function GlobalNotesTab() {
           {notes.map((note) => (
             <div
               key={note._id}
-              className="p-5 rounded-xl border border-border bg-card flex flex-col justify-between gap-4 hover:border-primary/40 transition-colors shadow-xs"
+              className="p-5 rounded-xl border border-border/80 bg-card flex flex-col justify-between gap-4 shadow-xs hover:shadow-sm hover:border-border transition-all duration-150"
             >
               <div className="space-y-2">
                 <div className="flex items-start justify-between gap-3">
@@ -131,7 +131,7 @@ export function GlobalNotesTab() {
                     variant="ghost"
                     size="sm"
                     onClick={() => handleOpenDelete(note)}
-                    className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer shrink-0"
+                    className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer shrink-0 transition-colors duration-150"
                     title="Moderate: Delete Note"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -144,7 +144,7 @@ export function GlobalNotesTab() {
               </div>
 
               {/* Note Metadata */}
-              <div className="pt-3 border-t border-border flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-foreground">
+              <div className="pt-3 border-t border-border/60 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-foreground">
                 <div className="flex items-center gap-1.5 font-mono truncate max-w-[200px]">
                   <User className="h-3 w-3 shrink-0" />
                   <span className="truncate">Author: {note.author}</span>
@@ -168,7 +168,7 @@ export function GlobalNotesTab() {
 
       {/* Pagination Footer */}
       {pagination && pagination.totalData > 0 && (
-        <div className="bg-card p-3.5 rounded-xl border border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+        <div className="bg-card p-3.5 rounded-xl border border-border/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-3">
             <span>
               Showing Page <span className="font-semibold text-foreground">{pagination.currentPage}</span> of{" "}

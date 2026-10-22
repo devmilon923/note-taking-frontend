@@ -240,11 +240,11 @@ export function UserFormDialog({
                 </Button>
                 <Button
                   type="button"
-                  variant={selectedRole === "admin" ? "destructive" : "outline"}
+                  variant={selectedRole === "admin" ? "default" : "outline"}
                   size="sm"
                   onClick={() => handleRoleChange("admin")}
                   disabled={isPending}
-                  className="gap-2 cursor-pointer"
+                  className="gap-2 cursor-pointer transition-all duration-150"
                 >
                   <ShieldCheck className="h-4 w-4" />
                   Admin Role
@@ -356,11 +356,11 @@ export function UserFormDialog({
                 </Button>
                 <Button
                   type="button"
-                  variant={selectedRole === "admin" ? "destructive" : "outline"}
+                  variant={selectedRole === "admin" ? "default" : "outline"}
                   size="sm"
                   onClick={() => handleRoleChange("admin")}
                   disabled={isPending}
-                  className="gap-2 cursor-pointer"
+                  className="gap-2 cursor-pointer transition-all duration-150"
                 >
                   <ShieldCheck className="h-4 w-4" />
                   Admin Role

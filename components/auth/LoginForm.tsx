@@ -77,19 +77,19 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-lg border-border">
-      <CardHeader className="space-y-1 text-center">
+    <Card className="w-full max-w-md shadow-sm border border-border/80 rounded-2xl bg-card">
+      <CardHeader className="space-y-1.5 text-center pb-4">
         <CardTitle className="text-2xl font-bold tracking-tight">
           Welcome back
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-xs text-muted-foreground">
           Sign in to your account with your email and password
         </CardDescription>
       </CardHeader>
 
       <CardContent>
         {serverError && (
-          <div className="mb-4 rounded-xl bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive font-medium">
+          <div className="mb-4 rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-xs text-destructive font-medium">
             {serverError}
           </div>
         )}

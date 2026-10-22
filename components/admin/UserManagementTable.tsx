@@ -82,7 +82,7 @@ export function UserManagementTable() {
   return (
     <div className="space-y-4">
       {/* Controls Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-card p-4 rounded-xl border border-border">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-card p-3.5 rounded-xl border border-border/80 shadow-xs">
         <div className="flex flex-1 items-center gap-2">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -94,12 +94,12 @@ export function UserManagementTable() {
             />
           </div>
 
-          <div className="flex items-center gap-1 bg-muted p-1 rounded-lg">
+          <div className="flex items-center gap-1 bg-muted/70 p-1 rounded-lg border border-border/60">
             <Button
               variant={roleFilter === "all" ? "default" : "ghost"}
               size="sm"
               onClick={() => setRoleFilter("all")}
-              className="h-7 text-xs px-2.5 cursor-pointer"
+              className="h-7 text-xs px-2.5 cursor-pointer transition-all duration-150"
             >
               All
             </Button>
@@ -107,7 +107,7 @@ export function UserManagementTable() {
               variant={roleFilter === "user" ? "default" : "ghost"}
               size="sm"
               onClick={() => setRoleFilter("user")}
-              className="h-7 text-xs px-2.5 cursor-pointer"
+              className="h-7 text-xs px-2.5 cursor-pointer transition-all duration-150"
             >
               Users
             </Button>
@@ -115,7 +115,7 @@ export function UserManagementTable() {
               variant={roleFilter === "admin" ? "default" : "ghost"}
               size="sm"
               onClick={() => setRoleFilter("admin")}
-              className="h-7 text-xs px-2.5 cursor-pointer"
+              className="h-7 text-xs px-2.5 cursor-pointer transition-all duration-150"
             >
               Admins
             </Button>
@@ -133,7 +133,7 @@ export function UserManagementTable() {
       </div>
 
       {/* Users Table / List */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      <div className="bg-card rounded-xl border border-border/80 shadow-xs overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -162,7 +162,7 @@ export function UserManagementTable() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase tracking-wider text-[10px] font-semibold">
+              <thead className="bg-muted/40 border-b border-border/70 text-muted-foreground uppercase tracking-wider text-[10px] font-semibold">
                 <tr>
                   <th className="py-3 px-4">User</th>
                   <th className="py-3 px-4">Role</th>
@@ -192,8 +192,10 @@ export function UserManagementTable() {
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 ${
-                              isAdmin ? "bg-destructive" : "bg-primary"
+                            className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 transition-colors ${
+                              isAdmin
+                                ? "bg-muted text-foreground border border-border/80 font-bold"
+                                : "bg-primary/10 text-primary font-bold"
                             }`}
                           >
                             {initial}
@@ -213,15 +215,15 @@ export function UserManagementTable() {
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         {isAdmin ? (
                           <Badge
-                            variant="destructive"
-                            className="text-[10px] uppercase font-bold gap-1"
+                            variant="outline"
+                            className="text-[10px] uppercase font-medium gap-1 bg-muted/80 text-foreground border-border/80"
                           >
-                            <ShieldCheck className="h-3 w-3" /> Admin
+                            <ShieldCheck className="h-3 w-3 text-primary" /> Admin
                           </Badge>
                         ) : (
                           <Badge
                             variant="secondary"
-                            className="text-[10px] uppercase font-semibold gap-1 text-muted-foreground"
+                            className="text-[10px] uppercase font-medium gap-1 text-muted-foreground"
                           >
                             <UserIcon className="h-3 w-3" /> User
                           </Badge>
@@ -270,17 +272,17 @@ export function UserManagementTable() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleOpenLookup(user)}
-                            className="h-7 px-2.5 text-[11px] gap-1 cursor-pointer"
+                            className="h-7 px-2.5 text-[11px] gap-1 cursor-pointer transition-colors duration-150"
                             title="View notes via $lookup"
                           >
-                            <BookOpen className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+                            <BookOpen className="h-3.5 w-3.5 text-primary" />
                             <span className="hidden md:inline">Notes</span>
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleOpenEdit(user)}
-                            className="h-7 w-7 p-0 cursor-pointer text-muted-foreground hover:text-foreground"
+                            className="h-7 w-7 p-0 cursor-pointer text-muted-foreground hover:text-foreground transition-colors duration-150"
                             title="Edit user"
                           >
                             <Pencil className="h-3.5 w-3.5" />
@@ -289,7 +291,7 @@ export function UserManagementTable() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleOpenDelete(user)}
-                            className="h-7 w-7 p-0 cursor-pointer text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                            className="h-7 w-7 p-0 cursor-pointer text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-150"
                             title="Delete user"
                           >
                             <Trash2 className="h-3.5 w-3.5" />

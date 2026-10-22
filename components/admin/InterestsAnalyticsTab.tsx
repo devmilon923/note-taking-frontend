@@ -93,11 +93,11 @@ export function InterestsAnalyticsTab() {
             return (
               <div
                 key={group.interest}
-                className="p-5 rounded-xl border border-border bg-card flex flex-col justify-between gap-4 shadow-xs"
+                className="p-5 rounded-xl border border-border/80 bg-card flex flex-col justify-between gap-4 shadow-xs"
               >
                 <div>
                   {/* Header */}
-                  <div className="flex items-center justify-between gap-2 pb-3 border-b border-border">
+                  <div className="flex items-center justify-between gap-2 pb-3 border-b border-border/70">
                     <div className="flex items-center gap-2.5">
                       <div className="p-2 rounded-lg bg-primary/10 text-primary">
                         <Sparkles className="h-4 w-4" />
@@ -115,7 +115,7 @@ export function InterestsAnalyticsTab() {
 
                   {/* Users in this interest */}
                   <div className="pt-3 space-y-2">
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                       Group Members
                     </p>
                     <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
@@ -127,10 +127,10 @@ export function InterestsAnalyticsTab() {
                         return (
                           <div
                             key={u._id}
-                            className="flex items-center justify-between gap-2 p-2 rounded-lg bg-muted/40 hover:bg-muted/70 transition-colors text-xs"
+                            className="flex items-center justify-between gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/60 transition-colors duration-150 text-xs"
                           >
                             <div className="flex items-center gap-2 min-w-0">
-                              <div className="h-6 w-6 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-[10px] shrink-0">
+                              <div className="h-6 w-6 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-[10px] shrink-0">
                                 {initial}
                               </div>
                               <div className="min-w-0">
@@ -147,10 +147,10 @@ export function InterestsAnalyticsTab() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleOpenLookup(u)}
-                              className="h-6 px-2 text-[10px] gap-1 text-muted-foreground hover:text-foreground cursor-pointer shrink-0"
+                              className="h-6 px-2 text-[10px] gap-1 text-muted-foreground hover:text-foreground cursor-pointer shrink-0 transition-colors duration-150"
                               title="Inspect notes via $lookup"
                             >
-                              <BookOpen className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+                              <BookOpen className="h-3 w-3 text-primary" />
                               <span>Notes</span>
                             </Button>
                           </div>

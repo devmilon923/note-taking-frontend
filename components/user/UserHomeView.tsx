@@ -30,24 +30,24 @@ export function UserHomeView() {
   const [editProfileOpen, setEditProfileOpen] = useState(false);
 
   return (
-    <div className="max-w-6xl w-full mx-auto p-6 md:p-8 space-y-8">
+    <div className="max-w-6xl w-full mx-auto p-6 md:p-8 space-y-6">
       {/* Welcome Banner */}
-      <div className="rounded-3xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/15 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="rounded-xl bg-card border border-border/80 p-6 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground">
+            <span className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20">
               <Sparkles className="h-3 w-3" /> User Workspace
             </span>
             {user?.role && (
-              <span className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-secondary text-secondary-foreground">
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md bg-muted text-foreground/85 border border-border/80">
                 <Shield className="h-3 w-3" /> {user.role}
               </span>
             )}
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold mt-2 tracking-tight">
+          <h2 className="text-xl md:text-2xl font-bold mt-2 tracking-tight text-foreground">
             Welcome back, {user?.name || "User"}
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             Capture, organize, and manage your personal notes securely.
           </p>
         </div>
@@ -70,7 +70,7 @@ export function UserHomeView() {
 
       {/* Collapsible Profile Details Card */}
       {showProfile && (
-        <Card className="border-border shadow-sm animate-in fade-in-50 duration-200">
+        <Card className="border border-border/80 shadow-xs rounded-xl animate-in fade-in-50 duration-150">
           <CardHeader className="pb-3 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-base flex items-center gap-2">
@@ -78,7 +78,7 @@ export function UserHomeView() {
                 Account Details
               </CardTitle>
               <CardDescription className="text-xs">
-                Synchronized from <code className="font-mono">GET /user/profile</code>
+                Synchronized from server
               </CardDescription>
             </div>
             <Button
@@ -93,33 +93,43 @@ export function UserHomeView() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="p-3 rounded-xl border bg-card/60 flex items-start gap-2.5">
+              <div className="p-3 rounded-lg border border-border/70 bg-muted/20 hover:bg-muted/40 transition-colors flex items-start gap-2.5">
                 <Mail className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="min-w-0">
-                  <p className="text-[11px] font-medium text-muted-foreground">Email</p>
-                  <p className="text-xs font-semibold truncate">{user?.email || "—"}</p>
+                  <p className="text-[11px] font-medium text-muted-foreground">
+                    Email
+                  </p>
+                  <p className="text-xs font-semibold truncate font-mono">
+                    {user?.email || "—"}
+                  </p>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl border bg-card/60 flex items-start gap-2.5">
+              <div className="p-3 rounded-lg border border-border/70 bg-muted/20 hover:bg-muted/40 transition-colors flex items-start gap-2.5">
                 <Shield className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-[11px] font-medium text-muted-foreground">Role</p>
-                  <p className="text-xs font-semibold capitalize">{user?.role || "user"}</p>
+                  <p className="text-[11px] font-medium text-muted-foreground">
+                    Role
+                  </p>
+                  <p className="text-xs font-semibold capitalize">
+                    {user?.role || "user"}
+                  </p>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl border bg-card/60 flex items-start gap-2.5">
+              <div className="p-3 rounded-lg border border-border/70 bg-muted/20 hover:bg-muted/40 transition-colors flex items-start gap-2.5">
                 <Tag className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="min-w-0">
-                  <p className="text-[11px] font-medium text-muted-foreground">Interest</p>
+                  <p className="text-[11px] font-medium text-muted-foreground">
+                    Interest
+                  </p>
                   <div className="flex flex-wrap gap-1 mt-0.5">
                     {(() => {
                       const interestsList = Array.isArray(user?.interests)
                         ? user.interests
                         : typeof user?.interests === "string" && user.interests
-                        ? [user.interests]
-                        : [];
+                          ? [user.interests]
+                          : [];
                       return interestsList.length > 0 ? (
                         interestsList.map((interest: string, i: number) => (
                           <span
@@ -137,10 +147,12 @@ export function UserHomeView() {
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl border bg-card/60 flex items-start gap-2.5">
+              <div className="p-3 rounded-lg border border-border/70 bg-muted/20 hover:bg-muted/40 transition-colors flex items-start gap-2.5">
                 <Calendar className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="min-w-0">
-                  <p className="text-[11px] font-medium text-muted-foreground">User ID</p>
+                  <p className="text-[11px] font-medium text-muted-foreground">
+                    User ID
+                  </p>
                   <p className="text-[11px] font-mono text-muted-foreground truncate">
                     {user?._id || "—"}
                   </p>

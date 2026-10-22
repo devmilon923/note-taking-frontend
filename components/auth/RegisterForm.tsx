@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, UserPlus } from "lucide-react";
 
-import { registerSchema, RegisterInput } from "@/types/auth";
+import { registerSchema, RegisterInput, ALLOWED_INTERESTS } from "@/types/auth";
 import { useAuth } from "@/context/AuthContext";
 import { getErrorMessage, getFieldErrors } from "@/query/axios";
 
@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -37,6 +38,7 @@ export function RegisterForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -44,28 +46,28 @@ export function RegisterForm() {
       name: "",
       email: "",
       password: "",
-      interests: "",
+      interests: [],
     },
   });
+
+  const toggleInterest = (interest: string) => {
+    const next = selectedInterests.includes(interest)
+      ? selectedInterests.filter((i) => i !== interest)
+      : [...selectedInterests, interest];
+    setSelectedInterests(next);
+    form.setValue("interests", next);
+  };
 
   const onSubmit = async (values: RegisterInput) => {
     setIsSubmitting(true);
     setServerError(null);
 
     try {
-      // Parse optional comma-separated interests into array of strings
-      const interestsArray = values.interests
-        ? values.interests
-            .split(",")
-            .map((s) => s.trim())
-            .filter((s) => s.length > 0)
-        : [];
-
       const response = await register({
         name: values.name,
         email: values.email,
         password: values.password,
-        interests: interestsArray.length > 0 ? interestsArray : undefined,
+        interests: selectedInterests.length > 0 ? selectedInterests : undefined,
       });
 
       toast.success(
@@ -93,19 +95,19 @@ export function RegisterForm() {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-lg border-border">
-      <CardHeader className="space-y-1 text-center">
+    <Card className="w-full max-w-md shadow-sm border border-border/80 rounded-2xl bg-card">
+      <CardHeader className="space-y-1.5 text-center pb-4">
         <CardTitle className="text-2xl font-bold tracking-tight">
           Create an account
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-xs text-muted-foreground">
           Enter your information to register for Note-Taking
         </CardDescription>
       </CardHeader>
 
       <CardContent>
         {serverError && (
-          <div className="mb-4 rounded-xl bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive font-medium">
+          <div className="mb-4 rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-xs text-destructive font-medium">
             {serverError}
           </div>
         )}
@@ -171,21 +173,39 @@ export function RegisterForm() {
               )}
             />
 
+            {/* Interests Selector */}
             <FormField
               control={form.control}
               name="interests"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Interests (optional)</FormLabel>
+              render={() => (
+                <FormItem className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <FormLabel className="text-xs font-medium">Interests (optional)</FormLabel>
+                    {selectedInterests.length > 0 && (
+                      <span className="text-[11px] text-muted-foreground font-medium">
+                        {selectedInterests.length} selected
+                      </span>
+                    )}
+                  </div>
                   <FormControl>
-                    <Input
-                      placeholder="e.g. coding, chess, design"
-                      disabled={isSubmitting}
-                      {...field}
-                    />
+                    <div className="flex flex-wrap gap-2 pt-0.5">
+                      {ALLOWED_INTERESTS.map((interest) => {
+                        const active = selectedInterests.includes(interest);
+                        return (
+                          <Badge
+                            key={interest}
+                            variant={active ? "default" : "outline"}
+                            onClick={() => !isSubmitting && toggleInterest(interest)}
+                            className="cursor-pointer capitalize select-none py-1.5 px-3 text-xs transition-all duration-150 active:scale-[0.98]"
+                          >
+                            {active ? `✓ ${interest}` : `+ ${interest}`}
+                          </Badge>
+                        );
+                      })}
+                    </div>
                   </FormControl>
-                  <FormDescription>
-                    Separate multiple interests with commas.
+                  <FormDescription className="text-[11px] text-muted-foreground">
+                    Select topics you are interested in organizing notes for.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
